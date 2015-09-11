@@ -1,11 +1,13 @@
-#include "KF.h"
+#include "Measurement.h"
+using namespace KF;
 #include "Predictor.h"
 #include "State3D.h"
 
-class XYMeasurement : public Measurement<State3D,2,Predictor>
+class XYMeasurement : public Measurement<State3D,Predictor,2>
 {
 public:
-  using Measurement<State3D,2,Predictor>::MeasurementVector;
+  using Measurement<State3D,Predictor,2>::MeasurementVector;
+  using Measurement<State3D,Predictor,2>::MeasurementCovariance;
 
   XYMeasurement(float x,float y,float dx,float dy,float rho):
     m_measurement(),
@@ -25,11 +27,10 @@ public:
   virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
 
 private:
-  using Measurement<State3D,2,Predictor>::StateVector;
-  using Measurement<State3D,2,Predictor>::StateCovariance;
-  using Measurement<State3D,2,Predictor>::HMatrix;
-  using Measurement<State3D,2,Predictor>::RMatrix;
-  using Measurement<State3D,2,Predictor>::KMatrix;
+  using Measurement<State3D,Predictor,2>::StateVector;
+  using Measurement<State3D,Predictor,2>::StateCovariance;
+  using Measurement<State3D,Predictor,2>::HMatrix;
+  using Measurement<State3D,Predictor,2>::KMatrix;
 
   virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
   virtual HMatrix getH() const
@@ -41,19 +42,20 @@ private:
     return H;
   }
   
-  virtual RMatrix getR() const
+  virtual MeasurementCovariance getCovariance() const
   {
     return m_R;
   }
 
   MeasurementVector m_measurement;
-  RMatrix m_R;
+  MeasurementCovariance m_R;
 };
 
-class YMeasurement : public Measurement<State3D,1,Predictor>
+class YMeasurement : public Measurement<State3D,Predictor,1>
 {
 public:
-  using Measurement<State3D,1,Predictor>::MeasurementVector;
+  using Measurement<State3D,Predictor,1>::MeasurementVector;
+  using Measurement<State3D,Predictor,1>::MeasurementCovariance;
 
   YMeasurement(float x,float y,float dy):
     m_measurement(),
@@ -74,11 +76,10 @@ public:
   float getX() const {return m_x;}
 
 private:
-  using Measurement<State3D,1,Predictor>::StateVector;
-  using Measurement<State3D,1,Predictor>::StateCovariance;
-  using Measurement<State3D,1,Predictor>::HMatrix;
-  using Measurement<State3D,1,Predictor>::RMatrix;
-  using Measurement<State3D,1,Predictor>::KMatrix;
+  using Measurement<State3D,Predictor,1>::StateVector;
+  using Measurement<State3D,Predictor,1>::StateCovariance;
+  using Measurement<State3D,Predictor,1>::HMatrix;
+  using Measurement<State3D,Predictor,1>::KMatrix;
 
   virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
   virtual HMatrix getH() const
@@ -89,20 +90,21 @@ private:
     return H;
   }
   
-  virtual RMatrix getR() const
+  virtual MeasurementCovariance getCovariance() const
   {
     return m_R;
   }
 
   MeasurementVector m_measurement;
-  RMatrix m_R;
+  MeasurementCovariance m_R;
   float m_x;
 };
 
-class XMeasurement : public Measurement<State3D,1,Predictor>
+class XMeasurement : public Measurement<State3D,Predictor,1>
 {
 public:
-  using Measurement<State3D,1,Predictor>::MeasurementVector;
+  using Measurement<State3D,Predictor,1>::MeasurementVector;
+  using Measurement<State3D,Predictor,1>::MeasurementCovariance;
 
   XMeasurement(float x,float y,float dx):
     m_measurement(),
@@ -123,11 +125,10 @@ public:
   float getY() const {return m_y;}
 
 private:
-  using Measurement<State3D,1,Predictor>::StateVector;
-  using Measurement<State3D,1,Predictor>::StateCovariance;
-  using Measurement<State3D,1,Predictor>::HMatrix;
-  using Measurement<State3D,1,Predictor>::RMatrix;
-  using Measurement<State3D,1,Predictor>::KMatrix;
+  using Measurement<State3D,Predictor,1>::StateVector;
+  using Measurement<State3D,Predictor,1>::StateCovariance;
+  using Measurement<State3D,Predictor,1>::HMatrix;
+  using Measurement<State3D,Predictor,1>::KMatrix;
 
   virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
   virtual HMatrix getH() const
@@ -138,12 +139,12 @@ private:
     return H;
   }
   
-  virtual RMatrix getR() const
+  virtual MeasurementCovariance getCovariance() const
   {
     return m_R;
   }
 
   MeasurementVector m_measurement;
-  RMatrix m_R;
+  MeasurementCovariance m_R;
   float m_y;
 };

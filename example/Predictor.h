@@ -1,7 +1,6 @@
 #ifndef PREDICTOR_H
 #define PREDICTOR_H
 
-#include "KF.h"
 #include "State3D.h"
 
 class XYMeasurement;
