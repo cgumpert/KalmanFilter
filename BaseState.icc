@@ -1,3 +1,5 @@
+#include <iomanip>
+
 namespace KF
 {
   template<unsigned int DIM>
@@ -14,12 +16,12 @@ namespace KF
     StateCovariance cov = this->getCovariance();
 
     for(unsigned int i = 0; i < DIM; ++i)
-      os << sv[i] << "\t";
+      os << std::setw(8) << std::setprecision(5) << sv[i] << "\t";
 
     for(unsigned int i = 0; i < DIM; ++i)
     {
       for(unsigned int j = i; j < DIM; ++j)
-	os << cov(i,j) << "\t";
+	os << std::setw(8) << std::setprecision(5) << cov(i,j) << "\t";
     }
   }
   
