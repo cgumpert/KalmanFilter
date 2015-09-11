@@ -2,15 +2,21 @@
 #define PREDICTOR_H
 
 #include "KF.h"
+#include "State3D.h"
 
 class XYMeasurement;
+class XMeasurement;
+class YMeasurement;
+
 class Predictor
 {
 public:
-  typedef State<3>::StateVector StateVector;
-  typedef State<3>::StateCovariance StateCovariance;
+  typedef State3D::StateVector StateVector;
+  typedef State3D::StateCovariance StateCovariance;
   
-  State<3>* visit(const State<3>& state,const XYMeasurement& meas) const;
+  State3D* visit(const State3D& state,const XYMeasurement& meas) const;
+  State3D* visit(const State3D& state,const XMeasurement& meas) const;
+  State3D* visit(const State3D& state,const YMeasurement& meas) const;
 };
 
 #endif
