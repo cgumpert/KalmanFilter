@@ -1,0 +1,33 @@
+namespace KF
+{
+  template<unsigned int DIM>
+  void BaseState<DIM>::print(std::ostream& os) const
+  {
+    os << "state vector = " << std::endl << getStateVector() << std::endl;
+    os << "covariance = " << std::endl << getCovariance() << std::endl;
+  }
+
+  template<unsigned int DIM>
+  void BaseState<DIM>::dump(std::ostream& os) const
+  {
+    StateVector sv = this->getStateVector();
+    StateCovariance cov = this->getCovariance();
+
+    for(unsigned int i = 0; i < DIM; ++i)
+      os << sv[i] << "\t";
+
+    for(unsigned int i = 0; i < DIM; ++i)
+    {
+      for(unsigned int j = i; j < DIM; ++j)
+	os << cov(i,j) << "\t";
+    }
+  }
+  
+  template<unsigned int DIM>
+  std::ostream& operator<<(std::ostream& os,const BaseState<DIM>& state)
+  {
+    state.dump(os);
+  
+    return os;
+  }
+}
