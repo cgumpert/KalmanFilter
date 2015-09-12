@@ -26,6 +26,16 @@ namespace KF
   }
   
   template<unsigned int DIM>
+  void BaseState<DIM>::updateCovariance(const StateCovariance& J,const StateCovariance* pNoise)
+  {
+    StateCovariance newCov = J * getCovariance() * J.transpose();
+    if(pNoise)
+      newCov += *pNoise;
+
+    setCovariance(newCov);
+  }
+
+  template<unsigned int DIM>
   std::ostream& operator<<(std::ostream& os,const BaseState<DIM>& state)
   {
     state.dump(os);

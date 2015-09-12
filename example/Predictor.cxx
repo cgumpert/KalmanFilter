@@ -22,10 +22,9 @@ State3D* Predictor::visit(const State3D& state,const XYMeasurement& meas) const
     1,0,0,
     0,1,dX*(1+pow(tan(sv[2]),2)),
     0,0,1;
-  cov = J * cov * J.transpose();
 
+  predicted->updateCovariance(J);
   predicted->setStateVector(sv);
-  predicted->setCovariance(cov);
     
   return predicted;
 }
@@ -51,10 +50,9 @@ State3D* Predictor::visit(const State3D& state,const XMeasurement& meas) const
     1,0,-dy / pow(sin(sv[2]),2),
     0,1,0,
     0,0,1;
-  cov = J * cov * J.transpose();
 
+  predicted->updateCovariance(J);
   predicted->setStateVector(sv);
-  predicted->setCovariance(cov);
     
   return predicted;
 }
@@ -80,10 +78,9 @@ State3D* Predictor::visit(const State3D& state,const YMeasurement& meas) const
     1,0,0,
     0,1,dx*(1+pow(tan(sv[2]),2)),
     0,0,1;
-  cov = J * cov * J.transpose();
 
+  predicted->updateCovariance(J);
   predicted->setStateVector(sv);
-  predicted->setCovariance(cov);
     
   return predicted;
 }

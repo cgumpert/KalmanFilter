@@ -48,6 +48,9 @@ namespace KF
 
     /** dump information about current state */
     virtual void dump(std::ostream&) const;
+
+    /** update covariance matrix given jacobian of the prediction and process noise */
+    void updateCovariance(const StateCovariance& jacobian,const StateCovariance* pNoise = 0);
   };
 
   /** overloaded streaming operator */
