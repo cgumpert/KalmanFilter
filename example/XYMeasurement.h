@@ -2,7 +2,7 @@
 #include <memory>
 
 // KF
-#include "Measurement.h"
+#include "BaseMeasurement.h"
 #include "State3D.h"
 #include "Predictor.h"
 using namespace KF;

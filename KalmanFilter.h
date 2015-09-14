@@ -7,7 +7,7 @@
 #include <memory>
 
 // KF
-#include "Measurement.h"
+#include "BaseMeasurement.h"
 
 namespace KF
 {
