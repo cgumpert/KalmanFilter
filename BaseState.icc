@@ -1,3 +1,4 @@
+// STL
 #include <iomanip>
 
 namespace KF
@@ -26,7 +27,7 @@ namespace KF
   }
   
   template<unsigned int DIM>
-  void BaseState<DIM>::updateCovariance(const StateCovariance& J,const StateCovariance* pNoise)
+  void BaseState<DIM>::updateCovariance(const TransportJacobian& J,const QMatrix* pNoise)
   {
     StateCovariance newCov = J * getCovariance() * J.transpose();
     if(pNoise)
