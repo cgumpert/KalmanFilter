@@ -3,6 +3,7 @@
 
 // STL
 #include <iostream>
+#include <memory>
 //Eigen
 #include <Eigen/Dense>
 
@@ -30,12 +31,14 @@ namespace KF
   public:
     /** dimensionality of the state vector */
     static const unsigned int sDIM = S::sDIM;
+    /** convenience typedef for shared pointer to State */
+    typedef std::shared_ptr<S> sp_S;
 
     /** perform prediction of state given the predictor and this measurement */
-    virtual S* acceptPredictor(const P&,const S&) const = 0;
+    virtual sp_S acceptPredictor(const P&,const S&) const = 0;
 
     /** update the given state due to the information of this measurement */
-    virtual S* update(const S&) const = 0;
+    virtual sp_S update(const S&) const = 0;
 
     /** print this measurement in nice formatting */
     virtual void print(std::ostream& os = std::cout) const = 0;
@@ -57,7 +60,7 @@ namespace KF
      @author Christian Gumpert <christian.gumpert@cern.ch>
    */
   template<class S,class P, int mDIM>
-  class Measurement : public CompatibleMeasurement<S,P>
+  class BaseMeasurement : public CompatibleMeasurement<S,P>
   {
   public:
     /** dimensionality of the state vector */
@@ -66,12 +69,14 @@ namespace KF
     typedef Eigen::Matrix<float,mDIM,1> MeasurementVector;
     /** convenience type definition for the measurement covariance */
     typedef Eigen::Matrix<float,mDIM,mDIM> MeasurementCovariance;
+    /** convenience typedef for shared pointer to State */
+    typedef typename CompatibleMeasurement<S,P>::sp_S sp_S;
 
     /** perform prediction of state given the predictor and this measurement */
-    virtual S* acceptPredictor(const P&,const S&) const override = 0;
+    virtual sp_S acceptPredictor(const P&,const S&) const override = 0;
 
     /** update the given state due to the information of this measurement */    
-    virtual S* update(const S&) const final;
+    virtual sp_S update(const S&) const final;
 
     /** access the actual measurement */
     virtual MeasurementVector getMeasurementVector() const = 0;
@@ -108,7 +113,7 @@ namespace KF
 
   /** overload streaming operator */
   template<class S,class P,unsigned int mDIM>
-  std::ostream& operator<<(std::ostream&,const Measurement<S,P,mDIM>&);
+  std::ostream& operator<<(std::ostream&,const BaseMeasurement<S,P,mDIM>&);
 }
 
 // include implementation

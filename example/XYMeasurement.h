@@ -1,13 +1,17 @@
-#include "Measurement.h"
-using namespace KF;
-#include "Predictor.h"
-#include "State3D.h"
+// STL
+#include <memory>
 
-class XYMeasurement : public Measurement<State3D,Predictor,2>
+// KF
+#include "Measurement.h"
+#include "State3D.h"
+#include "Predictor.h"
+using namespace KF;
+
+class XYMeasurement : public BaseMeasurement<State3D,Predictor,2>
 {
 public:
-  using Measurement<State3D,Predictor,2>::MeasurementVector;
-  using Measurement<State3D,Predictor,2>::MeasurementCovariance;
+  using BaseMeasurement<State3D,Predictor,2>::MeasurementVector;
+  using BaseMeasurement<State3D,Predictor,2>::MeasurementCovariance;
 
   XYMeasurement(float x,float y,float dx,float dy,float rho):
     m_measurement(),
@@ -19,7 +23,7 @@ public:
       rho * dx * dy, dy*dy;
   };
   
-  virtual State3D* acceptPredictor(const Predictor& pred,const State3D& state) const
+  virtual std::shared_ptr<State3D> acceptPredictor(const Predictor& pred,const State3D& state) const
   {
     return pred.visit(state,*this);
   }
@@ -27,10 +31,10 @@ public:
   virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
 
 private:
-  using Measurement<State3D,Predictor,2>::StateVector;
-  using Measurement<State3D,Predictor,2>::StateCovariance;
-  using Measurement<State3D,Predictor,2>::HMatrix;
-  using Measurement<State3D,Predictor,2>::KMatrix;
+  using BaseMeasurement<State3D,Predictor,2>::StateVector;
+  using BaseMeasurement<State3D,Predictor,2>::StateCovariance;
+  using BaseMeasurement<State3D,Predictor,2>::HMatrix;
+  using BaseMeasurement<State3D,Predictor,2>::KMatrix;
 
   virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
   virtual HMatrix getH() const
@@ -51,11 +55,11 @@ private:
   MeasurementCovariance m_R;
 };
 
-class YMeasurement : public Measurement<State3D,Predictor,1>
+class YMeasurement : public BaseMeasurement<State3D,Predictor,1>
 {
 public:
-  using Measurement<State3D,Predictor,1>::MeasurementVector;
-  using Measurement<State3D,Predictor,1>::MeasurementCovariance;
+  using BaseMeasurement<State3D,Predictor,1>::MeasurementVector;
+  using BaseMeasurement<State3D,Predictor,1>::MeasurementCovariance;
 
   YMeasurement(float x,float y,float dy):
     m_measurement(),
@@ -66,7 +70,7 @@ public:
     m_R << dy * dy;
   };
   
-  virtual State3D* acceptPredictor(const Predictor& pred,const State3D& state) const
+  virtual std::shared_ptr<State3D> acceptPredictor(const Predictor& pred,const State3D& state) const
   {
     return pred.visit(state,*this);
   }
@@ -76,10 +80,10 @@ public:
   float getX() const {return m_x;}
 
 private:
-  using Measurement<State3D,Predictor,1>::StateVector;
-  using Measurement<State3D,Predictor,1>::StateCovariance;
-  using Measurement<State3D,Predictor,1>::HMatrix;
-  using Measurement<State3D,Predictor,1>::KMatrix;
+  using BaseMeasurement<State3D,Predictor,1>::StateVector;
+  using BaseMeasurement<State3D,Predictor,1>::StateCovariance;
+  using BaseMeasurement<State3D,Predictor,1>::HMatrix;
+  using BaseMeasurement<State3D,Predictor,1>::KMatrix;
 
   virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
   virtual HMatrix getH() const
@@ -100,11 +104,11 @@ private:
   float m_x;
 };
 
-class XMeasurement : public Measurement<State3D,Predictor,1>
+class XMeasurement : public BaseMeasurement<State3D,Predictor,1>
 {
 public:
-  using Measurement<State3D,Predictor,1>::MeasurementVector;
-  using Measurement<State3D,Predictor,1>::MeasurementCovariance;
+  using BaseMeasurement<State3D,Predictor,1>::MeasurementVector;
+  using BaseMeasurement<State3D,Predictor,1>::MeasurementCovariance;
 
   XMeasurement(float x,float y,float dx):
     m_measurement(),
@@ -115,7 +119,7 @@ public:
     m_R << dx*dx;
   };
   
-  virtual State3D* acceptPredictor(const Predictor& pred,const State3D& state) const
+  virtual std::shared_ptr<State3D> acceptPredictor(const Predictor& pred,const State3D& state) const
   {
     return pred.visit(state,*this);
   }
@@ -125,10 +129,10 @@ public:
   float getY() const {return m_y;}
 
 private:
-  using Measurement<State3D,Predictor,1>::StateVector;
-  using Measurement<State3D,Predictor,1>::StateCovariance;
-  using Measurement<State3D,Predictor,1>::HMatrix;
-  using Measurement<State3D,Predictor,1>::KMatrix;
+  using BaseMeasurement<State3D,Predictor,1>::StateVector;
+  using BaseMeasurement<State3D,Predictor,1>::StateCovariance;
+  using BaseMeasurement<State3D,Predictor,1>::HMatrix;
+  using BaseMeasurement<State3D,Predictor,1>::KMatrix;
 
   virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
   virtual HMatrix getH() const

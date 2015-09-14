@@ -1,11 +1,12 @@
 #include "Predictor.h"
 #include "XYMeasurement.h"
 
-State3D* Predictor::visit(const State3D& state,const XYMeasurement& meas) const
+std::shared_ptr<State3D> Predictor::visit(const State3D& state,const XYMeasurement& meas) const
 {
   typedef XYMeasurement::MeasurementVector MeasurementVector;
-  
-  State3D* predicted = state.clone();
+
+  State3D* p = state.clone();
+  std::shared_ptr<State3D> predicted(p);
   StateVector sv = state.getStateVector();
   StateCovariance cov = state.getCovariance();
   MeasurementVector mv = meas.getMeasurementVector();
@@ -29,11 +30,11 @@ State3D* Predictor::visit(const State3D& state,const XYMeasurement& meas) const
   return predicted;
 }
 
-State3D* Predictor::visit(const State3D& state,const XMeasurement& meas) const
+std::shared_ptr<State3D> Predictor::visit(const State3D& state,const XMeasurement& meas) const
 {
   typedef XMeasurement::MeasurementVector MeasurementVector;
   
-  State3D* predicted = state.clone();
+  std::shared_ptr<State3D> predicted(state.clone());
   StateVector sv = state.getStateVector();
   StateCovariance cov = state.getCovariance();
   MeasurementVector mv = meas.getMeasurementVector();
@@ -57,11 +58,11 @@ State3D* Predictor::visit(const State3D& state,const XMeasurement& meas) const
   return predicted;
 }
 
-State3D* Predictor::visit(const State3D& state,const YMeasurement& meas) const
+std::shared_ptr<State3D> Predictor::visit(const State3D& state,const YMeasurement& meas) const
 {
   typedef YMeasurement::MeasurementVector MeasurementVector;
   
-  State3D* predicted = state.clone();
+  std::shared_ptr<State3D> predicted(state.clone());
   StateVector sv = state.getStateVector();
   StateCovariance cov = state.getCovariance();
   MeasurementVector mv = meas.getMeasurementVector();

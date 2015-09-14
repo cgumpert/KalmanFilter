@@ -1,6 +1,10 @@
 #ifndef PREDICTOR_H
 #define PREDICTOR_H
 
+// STL
+#include <memory>
+
+// KF
 #include "State3D.h"
 
 class XYMeasurement;
@@ -13,9 +17,9 @@ public:
   typedef State3D::StateVector StateVector;
   typedef State3D::StateCovariance StateCovariance;
   
-  State3D* visit(const State3D& state,const XYMeasurement& meas) const;
-  State3D* visit(const State3D& state,const XMeasurement& meas) const;
-  State3D* visit(const State3D& state,const YMeasurement& meas) const;
+  std::shared_ptr<State3D> visit(const State3D& state,const XYMeasurement& meas) const;
+  std::shared_ptr<State3D> visit(const State3D& state,const XMeasurement& meas) const;
+  std::shared_ptr<State3D> visit(const State3D& state,const YMeasurement& meas) const;
 };
 
 #endif
