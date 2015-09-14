@@ -1,5 +1,5 @@
-#ifndef MEASUREMENT_H
-#define MEASUREMENT_H
+#ifndef BASE_MEASUREMENT_H
+#define BASE_MEASUREMENT_H
 
 // STL
 #include <iostream>
