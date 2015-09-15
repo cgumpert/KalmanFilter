@@ -1,16 +1,18 @@
 #ifndef meas_h
 #define meas_h
 
-#include "Measurement.h"
+#include "BaseMeasurement.h"
 #include "State.h"
-#include "Predictor.h"
+#include "BasePredictor.h"
 
-class MyMeasurement : public KF::BaseMeasurement<State,Predictor,1>
+class Predictor;
+
+class MyMeasurement : public KF::BaseMeasurement<State,1>
 {
 public:
-  using typename KF::BaseMeasurement<State,Predictor,1>::MeasurementVector;
-  using typename KF::BaseMeasurement<State,Predictor,1>::MeasurementCovariance;
-  using typename KF::BaseMeasurement<State,Predictor,1>::sp_S;
+  using typename KF::BaseMeasurement<State,1>::MeasurementVector;
+  using typename KF::BaseMeasurement<State,1>::MeasurementCovariance;
+  using typename KF::BaseMeasurement<State,1>::sp_S;
 
   MyMeasurement(const float& y):
     m_meas(),
@@ -21,9 +23,9 @@ public:
   }
   
   /** perform prediction of state given the predictor and this measurement */
-  virtual sp_S acceptPredictor(const Predictor& pred,const State& state) const override
+  virtual sp_S acceptPredictor(const BasePredictor<State>& pred,StepCache<State>& cache,const State& state) const override
   {
-    return pred.visit(state,*this);
+    return pred.predict<Predictor>(cache,state);
   }
 
   /** access the actual measurement */
@@ -33,7 +35,7 @@ public:
   virtual MeasurementCovariance getCovariance() const override {return m_cov;}
 
 protected:
-  using typename KF::BaseMeasurement<State,Predictor,1>::HMatrix;
+  using typename KF::BaseMeasurement<State,1>::HMatrix;
   
 private:
   /** project a given state onto the measurement frame */

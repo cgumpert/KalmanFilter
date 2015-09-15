@@ -1,30 +1,26 @@
 #include "Predictor.h"
 #include "State.h"
-#include "MyMeasurement.h"
 
-std::shared_ptr<State> Predictor::visit(const State& s,const MyMeasurement& m) const
+Predictor::Predictor():
+  BasePredictor<State>(),
+  m_A(),
+  m_Q()
 {
-  typedef MyMeasurement::MeasurementVector MeasurementVector;
-  
-  std::shared_ptr<State> predicted(s.clone());
-  StateVector sv = s.getStateVector();
-  StateCovariance cov = s.getCovariance();
-  MeasurementVector mv = m.getMeasurementVector();
+  m_A << 1, -0.5, 0.5,1;
+  m_Q << 1,0,0,1;
+}
 
-  StateCovariance A;
-  A <<
-    1, -0.5,
-    0.5,1;
+Predictor::StateVector Predictor::propagate(const State& state) const
+{
+  return m_A * state.getStateVector();
+}
 
-  sv = A * sv;
+Predictor::TransportJacobian Predictor::getTransportJacobian(const State&) const
+{
+  return m_A;
+}
 
-  StateCovariance noise;
-  noise <<
-    1,0,
-    0,1;
-  
-  predicted->updateCovariance(A,&noise);
-  predicted->setStateVector(sv);
-    
-  return predicted;
+Predictor::QMatrix Predictor::getProcessNoise(const State&) const
+{
+  return m_Q;
 }

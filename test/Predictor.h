@@ -1,17 +1,25 @@
 #ifndef predictor_h
 #define predictor_h
 
-#include <memory>
+#include "BasePredictor.h"
+using namespace KF;
 #include "State.h"
-class MyMeasurement;
 
-class Predictor
+class Predictor: public BasePredictor<State>
 {
 public:
-  typedef State::StateVector StateVector;
-  typedef State::StateCovariance StateCovariance;
+  typedef BasePredictor<State>::StateVector        StateVector;
+  typedef BasePredictor<State>::TransportJacobian  TransportJacobian;
+  typedef BasePredictor<State>::QMatrix            QMatrix;
 
-  std::shared_ptr<State> visit(const State&,const MyMeasurement&) const;
+  Predictor();
+  StateVector         propagate(const State&) const;
+  TransportJacobian   getTransportJacobian(const State&) const;
+  QMatrix             getProcessNoise(const State&) const;
+
+private:
+  TransportJacobian m_A;
+  QMatrix           m_Q;
 };
 
 #endif

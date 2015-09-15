@@ -40,7 +40,7 @@ namespace KF
     static unsigned int stateDim() {return S::DIM;}
     
     /** perform prediction of state given the predictor and this measurement */
-    virtual void acceptPredictor(const BasePredictor<S>&,StepCache<S>&,const S&) const = 0;
+    virtual sp_S acceptPredictor(const BasePredictor<S>&,StepCache<S>&,const S&) const = 0;
     
     /** update the given state due to the information of this measurement */
     virtual sp_S update(const S&) const = 0;
@@ -77,7 +77,7 @@ namespace KF
     typedef typename CompatibleMeasurement<S>::sp_S sp_S;
 
     /** perform prediction of state given the predictor and this measurement */
-    virtual void acceptPredictor(const BasePredictor<S>&,StepCache<S>&,const S&) const override = 0;
+    virtual sp_S acceptPredictor(const BasePredictor<S>&,StepCache<S>&,const S&) const override = 0;
 
     /** update the given state due to the information of this measurement */    
     virtual sp_S update(const S&) const final;
@@ -118,7 +118,7 @@ namespace KF
   /** overload streaming operator */
   template<class S,unsigned int mDIM>
   std::ostream& operator<<(std::ostream&,const BaseMeasurement<S,mDIM>&);
-}
+} // end of namespace
 
 // include implementation
 #include "BaseMeasurement.icc"

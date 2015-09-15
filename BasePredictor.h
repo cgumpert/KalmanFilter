@@ -3,38 +3,44 @@
 
 // STL
 #include <memory>
-#include <iostream>
 // Eigen
 #include <Eigen/Dense>
 // KF
 #include "StepCache.h"
 
 namespace KF
-{  
+{
+  /**
+     @class BasePredictor
+
+     Base class for performing the prediction step of the Kalman filter.
+
+     @tparam S class describing the state which will be propagated
+     
+     @author Christian Gumpert <christian.gumpert@cern.ch>
+   */
   template<class S>
   class BasePredictor
   {
   public:
+    /** convenience typedef for shared pointer to State */
     typedef std::shared_ptr<S> sp_S;
-    typedef Eigen::Matrix<float,S::sDIM,S::sDIM> TransportJacobian;
-    typedef Eigen::Matrix<float,S::sDIM,S::sDIM> QMatrix;
+    /** convenience type definition for the state vector */    
     typedef typename S::StateVector StateVector;
+    /** convenience type definition for the state covariance */
     typedef typename S::StateCovariance StateCovariance;
-    
+    /** convenience type definition for the jacobian of the propagation */
+    typedef Eigen::Matrix<float,S::sDIM,S::sDIM> TransportJacobian;
+    /** convenience type definition for the process noise covariance */
+    typedef Eigen::Matrix<float,S::sDIM,S::sDIM> QMatrix;
+
+    /** predict the next state and store result in given cache object */
     template<class T,typename... Args>
-    void predict(StepCache<S>& cache,const S& inState,const Args&... args) const
-    {
-      const StateVector& newSV   = static_cast<const T*>(this)->propagate(inState,args...);
-      const TransportJacobian& J = static_cast<const T*>(this)->getTransportJacobian(inState,args...);
-      const QMatrix& Q           = static_cast<const T*>(this)->getProcessNoise(inState,args...);
-      StateCovariance pred_cov   = J * inState.getCovariance() * J.transpose() + Q;
-      
-      std::shared_ptr<S> sp_predicted(inState.clone());
-      sp_predicted->setStateVector(newSV);
-      sp_predicted->setCovariance(pred_cov);
-      cache.setPredictedState(sp_predicted);
-    }
+    sp_S predict(StepCache<S>&,const S&,const Args&...) const;
   };
 } // end of namespace
+
+// include implementation
+#include "BasePredictor.icc"
 
 #endif
