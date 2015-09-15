@@ -1,0 +1,26 @@
+namespace KF
+{
+  template<class S>
+  void
+  FilterStack<S>::add(StepCache<S>&& cache)
+  {
+    m_vSteps.push_back(std::move(cache));
+  }
+
+  template<class S>
+  void
+  FilterStack<S>::dump(std::ostream& os) const
+  {
+    for(const auto& s: m_vSteps)
+      s.dump(os);
+  }
+
+  template<class S>
+  std::ostream&
+  operator<<(std::ostream& os,const FilterStack<S>& stack)
+  {
+    stack.dump(os);
+
+    return os;
+  }
+} // end of namespace

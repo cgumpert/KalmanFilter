@@ -1,0 +1,82 @@
+namespace KF
+{
+  template<class S>
+  inline typename StepCache<S>::sp_cS
+  StepCache<S>::getPredictedState() const
+  {
+    return m_predictedState;
+  }
+
+  template<class S>
+  inline typename StepCache<S>::sp_cS
+  StepCache<S>::getFilteredState() const
+  {
+    return m_filteredState;
+  }
+
+  template<class S>
+  inline typename StepCache<S>::sp_cS
+  StepCache<S>::getSmoothedState() const
+  {
+    return m_smoothedState;
+  }
+
+  template<class S>
+  inline typename StepCache<S>::TransportJacobian
+  StepCache<S>::getJacobian() const
+  {
+    return m_jacobian;
+  }
+
+  template<class S>
+  inline void
+  StepCache<S>::setPredictedState(const sp_cS& predictedState)
+  {
+    m_predictedState = predictedState;
+  }
+
+  template<class S>
+  inline void
+  StepCache<S>::setFilteredState(const sp_cS& filteredState)
+  {
+    m_filteredState = filteredState;
+  }
+
+  template<class S>
+  inline void
+  StepCache<S>::setSmoothedState(const sp_cS& smoothedState)
+  {
+    m_smoothedState = smoothedState;
+  }
+
+  template<class S>
+  inline void
+  StepCache<S>::setJacobian(const TransportJacobian& jacobian)
+  {
+    m_jacobian = jacobian;
+  }
+
+  template<class S>
+  void
+  StepCache<S>::dump(std::ostream& os) const
+  {
+    if(m_predictedState)
+      m_predictedState->dump(os);
+    os << " | ";
+    if(m_filteredState)
+      m_filteredState->dump(os);
+    os << " | ";
+    if(m_smoothedState)
+      m_smoothedState->dump(os);
+    os << std::endl;
+  }
+  
+  template<class S>
+  std::ostream&
+  operator<<(std::ostream& os,const StepCache<S>& cache)
+  {
+    cache.dump(os);
+
+    return os;
+  }
+} // end of namespace
