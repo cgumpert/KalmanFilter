@@ -2,7 +2,6 @@
 #define KALMAN_FILTER_H
 
 // STL
-#include <iostream>
 #include <fstream>
 #include <memory>
 
@@ -25,10 +24,8 @@ namespace KF
       
       auto m_it = lMeasurements.begin();
       FilterStack<S> stack;
-      unsigned int k = 0;
-      for(; m_it != lMeasurements.end(); ++m_it, ++k)
+      for(; m_it != lMeasurements.end(); ++m_it)
       {
-	std::cout << k << std::endl;
 	StepCache<S> pCache = step(**m_it,*pCurrent,predictor);
 	pCurrent = pCache.getFilteredState().get();
 	stack.add(std::move(pCache));
