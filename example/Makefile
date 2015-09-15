@@ -1,5 +1,5 @@
 CC = g++
-CC_FLAGS = -g -std=c++11 -I/opt/eigen-3.2.5/ -I../
+CC_FLAGS = -g -std=c++11 -I/opt/eigen/3.2.5/ -I../
 
 all: test
 
