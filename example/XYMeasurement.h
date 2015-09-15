@@ -3,8 +3,10 @@
 
 // KF
 #include "BaseMeasurement.h"
+#include "BasePredictor.h"
 #include "State3D.h"
 #include "Predictor.h"
+#include "FilterStack.h"
 using namespace KF;
 
 class XYMeasurement : public BaseMeasurement<State3D,Predictor,2>
@@ -12,6 +14,8 @@ class XYMeasurement : public BaseMeasurement<State3D,Predictor,2>
 public:
   using BaseMeasurement<State3D,Predictor,2>::MeasurementVector;
   using BaseMeasurement<State3D,Predictor,2>::MeasurementCovariance;
+  using BaseMeasurement<State3D,Predictor,2>::Predictor;
+  using BaseMeasurement<State3D,Predictor,2>::Cache;
 
   XYMeasurement(float x,float y,float dx,float dy,float rho):
     m_measurement(),
@@ -23,9 +27,9 @@ public:
       rho * dx * dy, dy*dy;
   };
   
-  virtual std::shared_ptr<State3D> acceptPredictor(const Predictor& pred,const State3D& state) const
+  virtual void acceptPredictor(const Predictor& pred,const State3D& state,Cache& cache) const override
   {
-    return pred.visit(state,*this);
+    return pred.visit(cache,*this,0.3,true);
   }
 
   virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
@@ -69,10 +73,10 @@ public:
     m_measurement << y;
     m_R << dy * dy;
   };
-  
-  virtual std::shared_ptr<State3D> acceptPredictor(const Predictor& pred,const State3D& state) const
+
+  virtual void acceptPredictor(const Predictor& pred,const State3D& state,Cache& cache) const override
   {
-    return pred.visit(state,*this);
+    return pred.visit(cache,*this);
   }
 
   virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
@@ -119,9 +123,9 @@ public:
     m_R << dx*dx;
   };
   
-  virtual std::shared_ptr<State3D> acceptPredictor(const Predictor& pred,const State3D& state) const
+  virtual void acceptPredictor(const Predictor& pred,const State3D& state,Cache& cache) const override
   {
-    return pred.visit(state,*this);
+    return pred.visit(cache,state,*this);
   }
 
   virtual MeasurementVector getMeasurementVector() const {return m_measurement;}

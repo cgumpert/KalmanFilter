@@ -10,7 +10,7 @@ using namespace KF;
 int main()
 {
   const float dX = 0.1;
-  const unsigned int iPoints = 500;
+  const unsigned int iPoints = 50000;
 
   std::default_random_engine generator;
   std::normal_distribution<double> gauss(0,1);

@@ -8,6 +8,8 @@
 
 // KF
 #include "BaseMeasurement.h"
+#include "StepCache.h"
+#include "FilterStack.h"
 
 namespace KF
 {
@@ -15,29 +17,33 @@ namespace KF
   {
   public:
     template<class S,class P>
-    void filter(const S& initialState,const std::list<CompatibleMeasurement<S,P>*>& lMeasurements,const P& predictor) const
-    {
-      std::ofstream out("filter.log");
-      out.precision(5);
-      out.setf(std::ios::fixed, std:: ios::floatfield);
-    
+    void filter(const S& initialState,const std::list<CompatibleMeasurement<S>*>& lMeasurements,const P& predictor) const
+    {    
       const S* pCurrent = &initialState;
       std::shared_ptr<S> predicted(0);
       std::shared_ptr<S> filtered(0);
       
       auto m_it = lMeasurements.begin();
+      FilterStack<S> stack;
       unsigned int k = 0;
-      for(; m_it != lMeasurements.end(); ++m_it,++k)
+      for(; m_it != lMeasurements.end(); ++m_it, ++k)
       {
-	predicted = (*m_it)->acceptPredictor(predictor,*pCurrent);
-	filtered = (*m_it)->update(*predicted);
-	pCurrent = filtered.get();
-
-	out << k << "\t" << *predicted << *filtered << std::endl;
+	std::cout << k << std::endl;
+	StepCache<S> pCache = step(**m_it,*pCurrent,predictor);
+	pCurrent = pCache.getFilteredState().get();
+	stack.add(std::move(pCache));
       }
-
-      out.close();
     }
+
+    template<class S,class P>
+    StepCache<S> step(const CompatibleMeasurement<S>& meas,const S& currentState,const P& predictor) const
+      {
+	StepCache<S> cache;
+	meas.acceptPredictor(predictor,cache,currentState);
+	cache.setFilteredState(meas.update(*cache.getPredictedState().get()));
+
+	return cache;
+      }
   };
 }
 

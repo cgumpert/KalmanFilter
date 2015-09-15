@@ -6,20 +6,21 @@
 
 // KF
 #include "State3D.h"
+#include "BasePredictor.h"
 
 class XYMeasurement;
 class XMeasurement;
 class YMeasurement;
 
-class Predictor
+class Predictor: public BasePredictor<State3D,Predictor>
 {
 public:
   typedef State3D::StateVector StateVector;
   typedef State3D::StateCovariance StateCovariance;
   
-  std::shared_ptr<State3D> visit(const State3D& state,const XYMeasurement& meas) const;
-  std::shared_ptr<State3D> visit(const State3D& state,const XMeasurement& meas) const;
-  std::shared_ptr<State3D> visit(const State3D& state,const YMeasurement& meas) const;
+  void visit_impl(StepCache<State3D,Predictor>& state,const XYMeasurement& meas,float,bool) const;
+  void visit_impl(StepCache<State3D,Predictor>& state,const XMeasurement& meas) const;
+  void visit_impl(StepCache<State3D,Predictor>& state,const YMeasurement& meas) const;
 };
 
 #endif

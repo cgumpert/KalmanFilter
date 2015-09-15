@@ -27,10 +27,6 @@ namespace KF
     typedef Eigen::Matrix<float,sDIM,1>    StateVector;
     /** convenience type definition for the state covariance */
     typedef Eigen::Matrix<float,sDIM,sDIM> StateCovariance;
-    /** convenience type definition for the jacobian */
-    typedef Eigen::Matrix<float,sDIM,sDIM> TransportJacobian;
-    /** convenience type definition for the process noise */
-    typedef Eigen::Matrix<float,sDIM,sDIM> QMatrix;
 
     /** access the state vector */
     virtual StateVector getStateVector() const = 0;
@@ -52,9 +48,6 @@ namespace KF
 
     /** dump information about current state */
     virtual void dump(std::ostream&) const;
-
-    /** update covariance matrix given jacobian of the prediction and process noise */
-    void updateCovariance(const TransportJacobian& jacobian,const QMatrix* pNoise = 0);
   };
 
   /** overloaded streaming operator */

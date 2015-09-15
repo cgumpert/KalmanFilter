@@ -25,16 +25,6 @@ namespace KF
 	os << std::setw(8) << std::setprecision(5) << cov(i,j) << "\t";
     }
   }
-  
-  template<unsigned int DIM>
-  void BaseState<DIM>::updateCovariance(const TransportJacobian& J,const QMatrix* pNoise)
-  {
-    StateCovariance newCov = J * getCovariance() * J.transpose();
-    if(pNoise)
-      newCov += *pNoise;
-
-    setCovariance(newCov);
-  }
 
   template<unsigned int DIM>
   std::ostream& operator<<(std::ostream& os,const BaseState<DIM>& state)
