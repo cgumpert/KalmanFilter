@@ -34,9 +34,10 @@ namespace KF
   BaseMeasurement<S,mDIM>::getK(const StateCovariance& cov) const
   {
     HMatrix H = this->getH();
-    MeasurementCovariance R = this->getCovariance();
+    VMatrix V = this->getV();
+    RMatrix R = this->getCovariance();
   
-    return cov * H.transpose() * (H * cov * H.transpose() + R).inverse();
+    return cov * H.transpose() * (H * cov * H.transpose() + V * R * V.transpose()).inverse();
   };
   
   template<class S,int mDIM>
@@ -52,7 +53,7 @@ namespace KF
   BaseMeasurement<S,mDIM>::dump(std::ostream& os) const
   {
     MeasurementVector mv = this->getMeasurementVector();
-    MeasurementCovariance cov = this->getCovariance();
+    RMatrix cov = this->getCovariance();
 
     for(unsigned int i = 0; i < mDIM; ++i)
       os << mv[i] << "\t";

@@ -72,7 +72,7 @@ namespace KF
     /** convenience type definition for the measurement vector */
     typedef Eigen::Matrix<float,mDIM,1> MeasurementVector;
     /** convenience type definition for the measurement covariance */
-    typedef Eigen::Matrix<float,mDIM,mDIM> MeasurementCovariance;
+    typedef Eigen::Matrix<float,mDIM,mDIM> RMatrix;
     /** convenience typedef for shared pointer to State */
     typedef typename CompatibleMeasurement<S>::sp_S sp_S;
 
@@ -86,7 +86,7 @@ namespace KF
     virtual MeasurementVector getMeasurementVector() const = 0;
 
     /** acces the covariance of the measurement */
-    virtual MeasurementCovariance getCovariance() const = 0;
+    virtual RMatrix getCovariance() const = 0;
 
     /** print this measurement in nice formatting */
     virtual void print(std::ostream& os = std::cout) const override;
@@ -101,6 +101,8 @@ namespace KF
     typedef Eigen::Matrix<float,sDIM,sDIM> StateCovariance;
     /** convenience type definition for the projection matrix */
     typedef Eigen::Matrix<float,mDIM,sDIM> HMatrix;
+    /** convenience type definition for the measurement noise transformation matrix */
+    typedef Eigen::Matrix<float,mDIM,mDIM> VMatrix;
     /** convenience type definition for the gain matrix */
     typedef Eigen::Matrix<float,sDIM,mDIM> KMatrix;
   
@@ -108,8 +110,11 @@ namespace KF
     /** project a given state onto the measurement frame */
     virtual MeasurementVector projectStateVector(const StateVector&) const = 0;
 
-    /** get the jacobian of the projection */
+    /** get the jacobian of the projection with respect to the state vector*/
     virtual HMatrix getH() const = 0;
+
+    /** get the jacobian of the projection with respect to the measurement noise */
+    virtual VMatrix getV() const = 0;
 
     /** get the gain matrix */
     virtual KMatrix getK(const StateCovariance&) const;
