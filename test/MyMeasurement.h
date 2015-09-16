@@ -11,7 +11,7 @@ class MyMeasurement : public KF::BaseMeasurement<State,1>
 {
 public:
   using typename KF::BaseMeasurement<State,1>::MeasurementVector;
-  using typename KF::BaseMeasurement<State,1>::MeasurementCovariance;
+  using typename KF::BaseMeasurement<State,1>::RMatrix;
   using typename KF::BaseMeasurement<State,1>::sp_S;
 
   MyMeasurement(const float& y):
@@ -32,10 +32,11 @@ public:
   virtual MeasurementVector getMeasurementVector() const override {return m_meas;}
 
   /** acces the covariance of the measurement */
-  virtual MeasurementCovariance getCovariance() const override {return m_cov;}
+  virtual RMatrix getCovariance() const override {return m_cov;}
 
 protected:
   using typename KF::BaseMeasurement<State,1>::HMatrix;
+  using typename KF::BaseMeasurement<State,1>::VMatrix;
   
 private:
   /** project a given state onto the measurement frame */
@@ -44,7 +45,7 @@ private:
     return getH() * sv;
   }
 
-  /** get the jacobian of the projection */
+  /** get the jacobian of the projection with respect to the state vector*/
   virtual HMatrix getH() const
   {
     HMatrix H;
@@ -53,8 +54,17 @@ private:
     return H;
   }
 
+  /** get the jacobian of the projection with respect to the measurement noise */
+  virtual VMatrix getV() const
+  {
+    VMatrix V;
+    V << 1;
+
+    return V;
+  }
+  
   MeasurementVector m_meas;
-  MeasurementCovariance m_cov;
+  RMatrix m_cov;
 };
 
 #endif
