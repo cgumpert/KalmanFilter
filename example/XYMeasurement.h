@@ -34,9 +34,9 @@ public:
     return pred.predict<Predictor>(cache,state,*this);
   }
 
-  virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
+  virtual MeasurementVector getMeasurementVector() const override {return m_measurement;}
 
-  virtual RMatrix getCovariance() const
+  virtual RMatrix getCovariance() const override
   {
     return m_R;
   }
@@ -49,17 +49,17 @@ private:
   using BaseMeasurement<State3D,1>::HMatrix;
   using BaseMeasurement<State3D,1>::VMatrix;
 
-  virtual MeasurementVector projectStateVector(const StateVector& sv) const
+  virtual MeasurementVector projectStateVector(const StateVector& sv) const override
   {
     return getH() * sv;
   }
   
-  virtual HMatrix getH() const
+  virtual HMatrix getH() const override
   {
     return m_H;
   }
   
-  virtual VMatrix getV() const
+  virtual VMatrix getV() const override
   {
     return m_V;
   }
@@ -96,9 +96,9 @@ public:
     return pred.predict<Predictor>(cache,state,*this);
   }
 
-  virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
+  virtual MeasurementVector getMeasurementVector() const override {return m_measurement;}
 
-  virtual RMatrix getCovariance() const
+  virtual RMatrix getCovariance() const override
   {
     return m_R;
   }
@@ -111,17 +111,17 @@ private:
   using BaseMeasurement<State3D,1>::HMatrix;
   using BaseMeasurement<State3D,1>::VMatrix;
 
-  virtual MeasurementVector projectStateVector(const StateVector& sv) const
+  virtual MeasurementVector projectStateVector(const StateVector& sv) const override
   {
     return getH() * sv;
   }
   
-  virtual HMatrix getH() const
+  virtual HMatrix getH() const override
   {
     return m_H;
   }
   
-  virtual VMatrix getV() const
+  virtual VMatrix getV() const override
   {
     return m_V;
   }
