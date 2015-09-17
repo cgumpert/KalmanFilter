@@ -1,6 +1,6 @@
 namespace KF
 {
-  template<class S,int mDIM>
+  template<class S,unsigned int mDIM>
   typename BaseMeasurement<S,mDIM>::sp_S
   BaseMeasurement<S,mDIM>::update(const S& state) const
   {
@@ -29,7 +29,7 @@ namespace KF
     return filtered;
   }
 
-  template<class S,int mDIM>
+  template<class S,unsigned int mDIM>
   typename BaseMeasurement<S,mDIM>::KMatrix
   BaseMeasurement<S,mDIM>::getK(const StateCovariance& cov) const
   {
@@ -40,7 +40,7 @@ namespace KF
     return cov * H.transpose() * (H * cov * H.transpose() + V * R * V.transpose()).inverse();
   };
   
-  template<class S,int mDIM>
+  template<class S,unsigned int mDIM>
   void
   BaseMeasurement<S,mDIM>::print(std::ostream& os) const
   {
@@ -48,7 +48,7 @@ namespace KF
     os << "cov = " << std::endl << this->getCovariance() << std::endl;
   }
 
-  template<class S,int mDIM>
+  template<class S,unsigned int mDIM>
   void
   BaseMeasurement<S,mDIM>::dump(std::ostream& os) const
   {

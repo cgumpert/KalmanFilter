@@ -6,6 +6,8 @@
 #include <memory>
 //Eigen
 #include <Eigen/Dense>
+// KF
+#include "type_traits_helpers.h"
 
 namespace KF
 {
@@ -16,22 +18,28 @@ namespace KF
   /**
      @class CompatibleMeasurement
 
+     @brief abstract base class for all measurement types which are able to constrain system
+            states of type S
+
      This base class provides the generic interface for all specialised measurement classes
      which are able to constrain the state described by the class \c S. It handles the prediction
      of a given state to the next discrete state as well as the update of the predicted state
      using the information from a concrete measurement.
-     The prediction is implemented using the visitor pattern to allow the model (specified by
-     class \c P = the predictor class) to employ different prediction methods depending on the
-     concrete measurement at hand.
+     The prediction is implemented using the visitor pattern to allow the model to employ different
+     prediction methods depending on the concrete measurement at hand.
      
      @tparam S class describing the state which can be constrained by this measurement
      
      @author Christian Gumpert <christian.gumpert@cern.ch>
    */
-  
+
+
   template<class S>
   class CompatibleMeasurement
   {
+    // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+    KF_STATIC_ASSERT_IS_DERIVED_FROM(S,BaseState);
+    
   public:
     /** convenience typedef for shared pointer to State */
     typedef std::shared_ptr<S> sp_S;
@@ -63,9 +71,12 @@ namespace KF
      
      @author Christian Gumpert <christian.gumpert@cern.ch>
    */
-  template<class S, int mDIM>
+  template<class S,unsigned int mDIM>
   class BaseMeasurement : public CompatibleMeasurement<S>
   {
+    // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+    KF_STATIC_ASSERT_IS_DERIVED_FROM(S,BaseState);
+    
   public:
     /** dimensionality of the state vector */
     static const unsigned int sDIM = S::sDIM;
