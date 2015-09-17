@@ -9,6 +9,7 @@
 #include "BaseMeasurement.h"
 #include "StepCache.h"
 #include "FilterStack.h"
+#include "type_traits_helpers.h"
 
 namespace KF
 {
@@ -18,7 +19,12 @@ namespace KF
     /** test */
     template<class S,class P>
     FilterStack<S> filter(const S& initialState,const std::list<CompatibleMeasurement<S>*>& lMeasurements,const P& predictor) const
-    {    
+    {
+      // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+      KF_STATIC_ASSERT_IS_DERIVED_FROM(S,BaseState);
+      // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+      KF_STATIC_ASSERT_IS_DERIVED_FROM(P,BasePredictor);
+	
       const S* pCurrent = &initialState;
       std::shared_ptr<S> predicted(0);
       std::shared_ptr<S> filtered(0);
@@ -49,6 +55,9 @@ namespace KF
     template<class S>
     void smooth(FilterStack<S>& stack) const
     {
+      // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+      KF_STATIC_ASSERT_IS_DERIVED_FROM(S,BaseState);
+	
       typedef Eigen::Matrix<float,S::sDIM,S::sDIM> GMatrix;
       typedef std::shared_ptr<S> sp_S;
       typedef typename S::StateVector StateVector;

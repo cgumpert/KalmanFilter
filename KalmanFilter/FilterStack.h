@@ -5,12 +5,16 @@
 #include <iostream>
 // KF
 #include "StepCache.h"
+#include "type_traits_helpers.h"
 
 namespace KF
 {
   template<class S>
   class FilterStack
   {
+    // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+    KF_STATIC_ASSERT_IS_DERIVED_FROM(S,BaseState);
+    
   public:
     void add(StepCache<S>&&);
     

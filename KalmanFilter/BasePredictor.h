@@ -7,6 +7,7 @@
 #include <Eigen/Dense>
 // KF
 #include "StepCache.h"
+#include "type_traits_helpers.h"
 
 namespace KF
 {
@@ -22,6 +23,9 @@ namespace KF
   template<class S>
   class BasePredictor
   {
+    // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+    KF_STATIC_ASSERT_IS_DERIVED_FROM(S,BaseState);
+
   public:
     /** convenience typedef for shared pointer to State */
     typedef std::shared_ptr<S> sp_S;

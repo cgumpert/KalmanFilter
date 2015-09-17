@@ -6,12 +6,17 @@
 #include <memory>
 // Eigen
 #include <Eigen/Dense>
+// KF
+#include "type_traits_helpers.h"
 
 namespace KF
 {
   template<class S>
   class StepCache
   {
+    // make sure that the given template argument is a descendent of KF::BaseState<DIM>
+    KF_STATIC_ASSERT_IS_DERIVED_FROM(S,BaseState);
+    
   public:
     typedef Eigen::Matrix<float,S::sDIM,S::sDIM> TransportJacobian;
     typedef std::shared_ptr<const S> sp_cS;
