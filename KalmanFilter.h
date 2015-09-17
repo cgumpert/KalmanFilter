@@ -15,6 +15,7 @@ namespace KF
   class KalmanFilter
   {
   public:
+    /** test */
     template<class S,class P>
     FilterStack<S> filter(const S& initialState,const std::list<CompatibleMeasurement<S>*>& lMeasurements,const P& predictor) const
     {    
@@ -44,6 +45,7 @@ namespace KF
       return cache;
     }
 
+    /** test */
     template<class S>
     void smooth(FilterStack<S>& stack) const
     {
