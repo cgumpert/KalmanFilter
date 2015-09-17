@@ -1,3 +1,4 @@
+#include <iostream>
 #include <list>
 #include <random>
 
@@ -19,7 +20,7 @@ int main()
   State3D s(0,0,0.8);
   Predictor pred;
   std::list<CompatibleMeasurement<State3D>*> mList;
-  float x,y,dx,dy,rho;
+  float x,y,dx,dy;
   float p = 0;
   CompatibleMeasurement<State3D>* pMeas = 0;
   for(unsigned int i = 1; i <= iPoints; ++i)
@@ -32,29 +33,21 @@ int main()
       y = x + dX * gauss(generator);
       x += 0.1 * dX * gauss(generator);
       dx = 0.1 * dX + 0.5 * dX * fabs(gauss(generator));
-      dy = 0.1 * dX + 0.3 * dX * fabs(gauss(generator));
-      rho = uniform(generator);
-      pMeas = new TwoDMeasurement(x,y,dx,dy,rho);
-    }
-    else if(p < 0.75)
-    {
-      y = x + dX * gauss(generator);
-      dy = 0.1 * dX + 0.3 * dX * fabs(gauss(generator));
-      pMeas = new OneDMeasurement(x,y,dy,true);
+      pMeas = new XMeasurement(x,y,dx);
     }
     else
     {
-      y = x;
-      x += 0.1 * dX * gauss(generator);
-      dx = 0.1 * dX + 0.5 * dX * fabs(gauss(generator));
-      pMeas = new OneDMeasurement(x,y,dx,false);
+      y = x + dX * gauss(generator);
+      dy = 0.1 * dX + 0.3 * dX * fabs(gauss(generator));
+      pMeas = new YMeasurement(x,y,dy);
     }
 
     mList.push_back(pMeas);
   }
 
   KalmanFilter kf;
-  kf.filter(s,mList,pred);
+  FilterStack<State3D> stack = kf.filter(s,mList,pred);
+  kf.smooth(stack);
   
   return 0;
 }

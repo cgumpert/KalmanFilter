@@ -8,8 +8,8 @@
 #include "State3D.h"
 #include "BasePredictor.h"
 
-class TwoDMeasurement;
-class OneDMeasurement;
+class XMeasurement;
+class YMeasurement;
 
 class Predictor: public BasePredictor<State3D>
 {
@@ -19,14 +19,20 @@ public:
   using BasePredictor<State3D>::TransportJacobian;
   using BasePredictor<State3D>::QMatrix;
   
-  StateVector propagate(const State3D& state,const TwoDMeasurement& meas) const;
-  TransportJacobian getTransportJacobian(const State3D& state,const TwoDMeasurement& meas) const;
-  QMatrix getProcessNoise(const State3D& state,const TwoDMeasurement& meas) const;
+  StateVector propagate(const State3D& state,const XMeasurement& meas) const;
+  StateVector propagate(const State3D& state,const YMeasurement& meas) const;
 
-  StateVector propagate(const State3D& state,const OneDMeasurement& meas,bool) const;
-  TransportJacobian getTransportJacobian(const State3D& state,const OneDMeasurement& meas,bool) const;
-  QMatrix getProcessNoise(const State3D& state,const OneDMeasurement& meas,bool) const;
-  
+  TransportJacobian getTransportJacobian(const State3D& state,const XMeasurement& meas) const;
+  TransportJacobian getTransportJacobian(const State3D& state,const YMeasurement& meas) const;
+
+  template<class M>
+  QMatrix getProcessNoise(const State3D& state,const M& meas) const
+  {
+    static QMatrix Q;
+    Q << 0.5,0,0,  0,0.5,0,  0,0,0.1;
+
+    return Q;
+  }
 };
 
 #endif

@@ -9,23 +9,26 @@
 #include "FilterStack.h"
 using namespace KF;
 
-class TwoDMeasurement : public BaseMeasurement<State3D,2>
+class XMeasurement : public BaseMeasurement<State3D,1>
 {
 public:
-  using BaseMeasurement<State3D,2>::MeasurementVector;
-  using BaseMeasurement<State3D,2>::MeasurementCovariance;
-  using BaseMeasurement<State3D,2>::sp_S;
+  using BaseMeasurement<State3D,1>::MeasurementVector;
+  using BaseMeasurement<State3D,1>::RMatrix;
+  using BaseMeasurement<State3D,1>::sp_S;
 
-  TwoDMeasurement(float x,float y,float dx,float dy,float rho):
+  XMeasurement(float x,float y,float dx):
     m_measurement(),
-    m_R()
+    m_R(),
+    m_H(),
+    m_V(),
+    m_y(y)
   {
-    m_measurement << x,y;
-    m_R <<
-      dx*dx, rho * dx * dy,
-      rho * dx * dy, dy*dy;
+    m_measurement << x;
+    m_R << dx * dx;
+    m_H << 1,0,0;
+    m_V << 0.1;
   };
-  
+
   virtual sp_S acceptPredictor(const BasePredictor<State3D>& pred,StepCache<State3D>& cache,const State3D& state) const override
   {
     return pred.predict<Predictor>(cache,state,*this);
@@ -33,86 +36,100 @@ public:
 
   virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
 
-private:
-  using BaseMeasurement<State3D,2>::StateVector;
-  using BaseMeasurement<State3D,2>::StateCovariance;
-  using BaseMeasurement<State3D,2>::HMatrix;
-  using BaseMeasurement<State3D,2>::KMatrix;
-
-  virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
-  
-  virtual HMatrix getH() const
-  {
-    static HMatrix H;
-    H <<
-      1,0,0,
-      0,1,0;
-    return H;
-  }
-  
-  virtual MeasurementCovariance getCovariance() const
+  virtual RMatrix getCovariance() const
   {
     return m_R;
   }
 
-  MeasurementVector m_measurement;
-  MeasurementCovariance m_R;
-};
-
-class OneDMeasurement : public BaseMeasurement<State3D,1>
-{
-public:
-  using BaseMeasurement<State3D,1>::MeasurementVector;
-  using BaseMeasurement<State3D,1>::MeasurementCovariance;
-  using BaseMeasurement<State3D,1>::sp_S;
-
-  OneDMeasurement(float x,float pos,float delta,bool bIsX = true):
-    m_measurement(),
-    m_R(),
-    m_H(),
-    m_pos(pos),
-    m_bIsX(bIsX)
-  {
-    m_measurement << x;
-    m_R << delta * delta;
-    if(m_bIsX)
-      m_H << 1,0,0;
-    else
-      m_H << 0,1,0;
-  };
-
-  virtual sp_S acceptPredictor(const BasePredictor<State3D>& pred,StepCache<State3D>& cache,const State3D& state) const override
-  {
-    return pred.predict<Predictor>(cache,state,*this,m_bIsX);
-  }
-
-  virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
-
-  float getPos() const {return m_pos;}
+  float getY() const {return m_y;}
 
 private:
   using BaseMeasurement<State3D,1>::StateVector;
   using BaseMeasurement<State3D,1>::StateCovariance;
   using BaseMeasurement<State3D,1>::HMatrix;
-  using BaseMeasurement<State3D,1>::KMatrix;
+  using BaseMeasurement<State3D,1>::VMatrix;
 
-  virtual MeasurementVector projectStateVector(const StateVector& sv) const {return getH() * sv;}
-  virtual HMatrix getH() const
+  virtual MeasurementVector projectStateVector(const StateVector& sv) const
   {
-    static HMatrix H;
-    H << 0,1,0;
-
-    return H;
+    return getH() * sv;
   }
   
-  virtual MeasurementCovariance getCovariance() const
+  virtual HMatrix getH() const
+  {
+    return m_H;
+  }
+  
+  virtual VMatrix getV() const
+  {
+    return m_V;
+  }
+
+  MeasurementVector m_measurement;
+  RMatrix m_R;
+  HMatrix m_H;
+  VMatrix m_V;
+  float m_y;
+};
+
+class YMeasurement : public BaseMeasurement<State3D,1>
+{
+public:
+  using BaseMeasurement<State3D,1>::MeasurementVector;
+  using BaseMeasurement<State3D,1>::RMatrix;
+  using BaseMeasurement<State3D,1>::sp_S;
+
+  YMeasurement(float x,float y,float dy):
+    m_measurement(),
+    m_R(),
+    m_H(),
+    m_V(),
+    m_x(x)
+  {
+    m_measurement << y;
+    m_R << dy * dy;
+    m_H << 0,1,0;
+    m_V << 0.2;
+  };
+
+  virtual sp_S acceptPredictor(const BasePredictor<State3D>& pred,StepCache<State3D>& cache,const State3D& state) const override
+  {
+    return pred.predict<Predictor>(cache,state,*this);
+  }
+
+  virtual MeasurementVector getMeasurementVector() const {return m_measurement;}
+
+  virtual RMatrix getCovariance() const
   {
     return m_R;
   }
 
+  float getX() const {return m_x;}
+
+private:
+  using BaseMeasurement<State3D,1>::StateVector;
+  using BaseMeasurement<State3D,1>::StateCovariance;
+  using BaseMeasurement<State3D,1>::HMatrix;
+  using BaseMeasurement<State3D,1>::VMatrix;
+
+  virtual MeasurementVector projectStateVector(const StateVector& sv) const
+  {
+    return getH() * sv;
+  }
+  
+  virtual HMatrix getH() const
+  {
+    return m_H;
+  }
+  
+  virtual VMatrix getV() const
+  {
+    return m_V;
+  }
+
+
   MeasurementVector m_measurement;
-  MeasurementCovariance m_R;
+  RMatrix m_R;
   HMatrix m_H;
-  float m_pos;
-  bool m_bIsX;
+  VMatrix m_V;
+  float m_x;
 };
